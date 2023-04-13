@@ -5,7 +5,7 @@ import {
   createOneContent,
   updateOneContent,
   deleteOneContent,
-} from './category.controller';
+} from './user.controller';
 
 const router = Router();
 
