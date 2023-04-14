@@ -1,109 +1,105 @@
 import { Request, Response } from 'express';
-import { PrismaClient, Category } from '@prisma/client';
+import { PrismaClient, TypeUser } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export async function filterByAllLibrary(req: Request, res: Response) {
-    const topic = (req.query.search || '').toString();
-    const status = (req.query.category  || '') as Category;
+export async function filterByAllUser(req: Request, res: Response) {
+  const email = (req.query.email || '').toString();
+  const type = req.query.type as TypeUser;
+
+  const page = Number(req.query.page);
+  const pagination = Number(req.query.pagination || 10);
+  console.log("req.query",type);
+  
+
+  try {
+    // 1. Filtro para lista de user. "con paginacion"
+    const response = await prisma.user.findMany({
+      orderBy: [{ id: 'asc' }],
+      skip: pagination * (page - 1),
+      take: pagination,
+      where: {
+        email: { contains: email, mode: 'insensitive' },
+        ...(type !== undefined && { type }),
+        
+      },
+      include: { contents: true },
+    });
+    // 2. Filtro para lista de user. Sin paginacion, usado para mostrar total de busqueda
+    const total = await prisma.user.findMany({
+      orderBy: [{ id: 'asc' }],
+      where: {
+        email: { contains: email, mode: 'insensitive' },
+        ...(type !== undefined && { type }),
+      },
+    });
+    return res.status(200).json({
+      message: { data: response, total: total.length },
+    });
+  } catch (err) {
+    return res.status(400).json({ message: 'Something went wrong' });
+  }
+}
+
+export async function authenticateUser(req: Request, res: Response) {
+  const { email, password } = req.body;
+
+  try {
+    const response = await prisma.user.findMany({
+      where: {
+        email: { equals: (email || '').toString(), mode: 'insensitive' },
+        password: { equals: (password || '').toString(), mode: 'insensitive' },
+      },
+    });
+    return res.status(200).json({ message: response });
+  } catch (err) {
+    return res.status(500).json({ message: 'Something went wrong' });
+  }
+}
+
+export async function createOneUser(req: Request, res: Response) {
+  const { email, type, password } = req.body;
+  
+  try {
+    const response = await prisma.user.create({
+      data: {
+        email, password, type: type as TypeUser,
+        updatedAt: new Date(),
+      },
+    });
+    return res.status(200).json({ message: response });
+  } catch (err) {
+    console.log('err',err);
     
-    const page = Number(req.query.page);
-    const pagination = Number(req.query.pagination || 100);
-
-    try {
-        // 1. Filtro para lista de aplicaciones. Usado en vista adminDetails "con paginacion"
-        const response = await prisma.user.findMany({
-            where: { id },
-            select: {
-                email: true,
-                name: true,
-                id: true,
-                applications: {
-                    skip: pagination * (page - 1),
-                    take: pagination,
-                    orderBy: [{ updatedAt: 'desc' }],
-                    include: { applicationLogs: { orderBy: [{ createdAt: 'desc' }] } },
-                    where: {
-                        OR: [
-                            { company: { contains: search, mode: 'insensitive' } },
-                            { role: { contains: search, mode: 'insensitive' } },
-                        ],
-                        ...(status !== undefined && { status }),
-                    },
-                },
-            },
-
-        });
-        // 2. Filtro para lista de Aplicacion. "Sin paginacion", usado para mostrar total de busqueda
-        const total = await prisma.user.findMany({
-            where: { id },
-            select: {
-                email: true,
-                applications: {
-                    where: {
-                        OR: [
-                            { company: { contains: search, mode: 'insensitive' } },
-                            { role: { contains: search, mode: 'insensitive' } },
-                        ],
-                        ...(status !== undefined && { status }),
-                    },
-                },
-            },
-
-        });
-        return res.status(200).json({
-            message: { ...response[0], total: total[0].applications.length },
-        });
-    } catch (err) {
-        return res.status(400).json({ message: 'Something went wrong' });
-    }
+    return res.status(500).json({ message: err });
+  }
 }
 
+export async function updateOneUser(req: Request, res: Response) {
+  const { id, email, type, password } = req.body;
 
-export async function createOneApplication(req: Request, res: Response) {
-    const { makerId, company, role, description, url,} = req.body;
-
-    try {
-        const response = await prisma.user.update({
-            where: { id: makerId },
-            data: {
-                applications: {
-                    create:
-                    // Creacion de primer log, al crear aplicacion
-                    {
-                        company,
-                        role,
-                        description,
-                        url,
-                        createdAt: new Date(),
-                        updatedAt: new Date(),
-                        applicationLogs: {
-                            create: {
-                                type: ApplicationLogType.NOTE,
-                                fromStatus: ApplicationStatus.APPLIED,
-                                toStatus: ApplicationStatus.APPLIED,
-                                message: 'Create application',
-                            },
-                        },
-                    },
-                },
-            },
-        });
-        return res.status(200).json({ message: response });
-    } catch (err) {
-        return res.status(400).json({ message: 'Something went wrong' });
-    }
+  try {
+    const response = await prisma.user.update({
+      where: { id },
+      data: {
+        email, password, type: type as TypeUser,
+        updatedAt: new Date(),
+      },
+    });
+    return res.status(200).json({ message: response });
+  } catch (err) {
+    return res.status(500).json({ message: err });
+  }
 }
 
-
-export async function deleteOneApplication(req: Request, res: Response) {
-    const { makerId } = req.params;
-    try {
-        const response = await prisma.application.delete({
-            where: { id: Number(makerId) },
-        });
-        return res.status(200).json({ message: response });
-    } catch (err) {
-        return res.status(400).json({ message: 'Something went wrong' });
-    }
+export async function deleteOneUser(req: Request, res: Response) {
+  const { userId } = req.params;
+  try {
+    const response = await prisma.user.delete({
+      where: { id: Number(userId) },
+    });
+    return res.status(200).json({ message: response });
+  } catch (err) {
+    return res.status(400).json({ message: 'Something went wrong' });
+  }
 }

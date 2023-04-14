@@ -5,14 +5,14 @@ import {
   createOneContent,
   updateOneContent,
   deleteOneContent,
-} from './category.controller';
+} from './content.controller';
 
 const router = Router();
 
-router.get('/filterbyapplication', filterByAllContent);
+router.get('/filterbycontent', filterByAllContent);
 router.post('/', createOneContent);
 router.put('/', updateOneContent);
-router.delete('/:makerId', deleteOneContent);
+router.delete('/:contentId', deleteOneContent);
 
 export default router;
 

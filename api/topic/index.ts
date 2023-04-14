@@ -1,18 +1,18 @@
 import { Router } from 'express';
 
 import {
-  filterByAllContent,
-  createOneContent,
-  updateOneContent,
-  deleteOneContent,
+  getAllTopic,
+  createOneTopic,
+  updateOneTopic,
+  deleteOneTopic,
 } from './topic.controller';
 
 const router = Router();
 
-router.get('/filterbyapplication', filterByAllContent);
-router.post('/', createOneContent);
-router.put('/', updateOneContent);
-router.delete('/:makerId', deleteOneContent);
+router.get('/filterAllTopic', getAllTopic);
+router.post('/', createOneTopic);
+router.put('/', updateOneTopic);
+router.delete('/:topicId', deleteOneTopic);
 
 export default router;
 

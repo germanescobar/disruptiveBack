@@ -15,7 +15,27 @@ const options = {
     openapi: '3.0.1',
     info: {
       title: 'API Documentation',
+      version:'1.0.0',
       description: 'API Documentation Talent platform',
+      license: {
+        name: 'MIT',
+        url: 'https://choosealicense.com/licenses/mit/',
+      },
+      contact: {
+        name: 'Make It Real',
+        url: 'https://makeitreal.camp/',
+        email: 'info@makeitreal.camp',
+      },
+    },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          in: 'header',
+        },
+      },
     },
     // Only for all endpoints
     // security: [

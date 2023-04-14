@@ -3,19 +3,15 @@
  */
 import { Application } from 'express';
 
-import content from './api/content';
+import user from './api/user';
 import topic from './api/topic';
-import company from './api/user';
+import content from './api/content';
 
 function routes(app: Application) {
-  app.use('/api/admins', admin);
-  app.use('/api/cohorts', cohort);
-  app.use('/api/companies', company);
-  app.use('/api/healthcheck', healthcheck);
-  app.use('/api/jobs', job);
-  app.use('/api/makers', maker);
+    app.use('/api/user', user);
+    app.use('/api/topic', topic);
+    app.use('/api/content', content);
 
-  
 }
 
 export default routes;

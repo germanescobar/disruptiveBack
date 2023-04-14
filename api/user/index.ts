@@ -1,18 +1,20 @@
 import { Router } from 'express';
 
 import {
-  filterByAllContent,
-  createOneContent,
-  updateOneContent,
-  deleteOneContent,
+  filterByAllUser,
+  authenticateUser,
+  createOneUser,
+  updateOneUser,
+  deleteOneUser,
 } from './user.controller';
 
 const router = Router();
 
-router.get('/filterbyapplication', filterByAllContent);
-router.post('/', createOneContent);
-router.put('/', updateOneContent);
-router.delete('/:makerId', deleteOneContent);
+router.get('/filterbyuser', filterByAllUser);
+router.post('/authenticate', authenticateUser);
+router.post('/', createOneUser);
+router.put('/', updateOneUser);
+router.delete('/:userId', deleteOneUser);
 
 export default router;
 

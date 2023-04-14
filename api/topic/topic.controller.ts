@@ -3,104 +3,81 @@ import { PrismaClient, Category } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export async function filterByAllLibrary(req: Request, res: Response) {
-    const topic = (req.query.search || '').toString();
-    const status = (req.query.category  || '') as Category;
+export async function getAllTopic(req: Request, res: Response) {
+    const name = (req.query.name || '').toString();
+    const urlImage = (req.query.urlImage  || '').toString();
     
-    const page = Number(req.query.page);
+    const page = Number(req.query.page|| 1);
     const pagination = Number(req.query.pagination || 100);
 
     try {
-        // 1. Filtro para lista de aplicaciones. Usado en vista adminDetails "con paginacion"
-        const response = await prisma.user.findMany({
-            where: { id },
-            select: {
-                email: true,
-                name: true,
-                id: true,
-                applications: {
-                    skip: pagination * (page - 1),
-                    take: pagination,
-                    orderBy: [{ updatedAt: 'desc' }],
-                    include: { applicationLogs: { orderBy: [{ createdAt: 'desc' }] } },
-                    where: {
-                        OR: [
-                            { company: { contains: search, mode: 'insensitive' } },
-                            { role: { contains: search, mode: 'insensitive' } },
-                        ],
-                        ...(status !== undefined && { status }),
-                    },
-                },
-            },
-
+        // 1. Filtro para lista de user. "con paginacion"
+        const response = await prisma.topic.findMany({
+          orderBy: [{ id: 'asc' }],
+          skip: pagination * (page - 1),
+          take: pagination,
+          where: {
+            name: { contains: name, mode: 'insensitive' },
+            urlImage: { contains: urlImage, mode: 'insensitive' },
+          },
         });
-        // 2. Filtro para lista de Aplicacion. "Sin paginacion", usado para mostrar total de busqueda
-        const total = await prisma.user.findMany({
-            where: { id },
-            select: {
-                email: true,
-                applications: {
-                    where: {
-                        OR: [
-                            { company: { contains: search, mode: 'insensitive' } },
-                            { role: { contains: search, mode: 'insensitive' } },
-                        ],
-                        ...(status !== undefined && { status }),
-                    },
-                },
-            },
-
+        // 2. Filtro para lista de user. Sin paginacion, usado para mostrar total de busqueda
+        const total = await prisma.topic.findMany({
+          orderBy: [{ id: 'asc' }],
+          where: {
+            name: { contains: name, mode: 'insensitive' },
+            urlImage: { contains: urlImage, mode: 'insensitive' },
+          },
         });
         return res.status(200).json({
-            message: { ...response[0], total: total[0].applications.length },
+          message: { data:response, total: total.length },
         });
-    } catch (err) {
+      } catch (err) {
+        console.log("err",err);
+        
         return res.status(400).json({ message: 'Something went wrong' });
     }
 }
 
 
-export async function createOneApplication(req: Request, res: Response) {
-    const { makerId, company, role, description, url,} = req.body;
-
+export async function createOneTopic(req: Request, res: Response) {
+    const { name, urlImage,categories } = req.body;
     try {
-        const response = await prisma.user.update({
-            where: { id: makerId },
-            data: {
-                applications: {
-                    create:
-                    // Creacion de primer log, al crear aplicacion
-                    {
-                        company,
-                        role,
-                        description,
-                        url,
-                        createdAt: new Date(),
-                        updatedAt: new Date(),
-                        applicationLogs: {
-                            create: {
-                                type: ApplicationLogType.NOTE,
-                                fromStatus: ApplicationStatus.APPLIED,
-                                toStatus: ApplicationStatus.APPLIED,
-                                message: 'Create application',
-                            },
-                        },
-                    },
-                },
-            },
-        });
-        return res.status(200).json({ message: response });
+      const response = await prisma.topic.create({
+        data: {
+            name, urlImage, categories: categories as Category,
+          updatedAt: new Date(),
+        },
+      });
+      return res.status(200).json({ message: response });
     } catch (err) {
-        return res.status(400).json({ message: 'Something went wrong' });
+      return res.status(500).json({ message: err });
     }
-}
+  }
 
 
-export async function deleteOneApplication(req: Request, res: Response) {
-    const { makerId } = req.params;
+  export async function updateOneTopic(req: Request, res: Response) {
+    const { id, name, urlImage,categories } = req.body;
+    console.log("req.body",req.body);
     try {
-        const response = await prisma.application.delete({
-            where: { id: Number(makerId) },
+      const response = await prisma.topic.update({
+        where: { id },
+        data: {
+            name, urlImage, categories: categories as Category,
+          updatedAt: new Date(),
+        },
+      });
+      return res.status(200).json({ message: response });
+    } catch (err) {
+      return res.status(500).json({ message: err });
+    }
+  }
+
+export async function deleteOneTopic(req: Request, res: Response) {
+    const { topicId } = req.params;
+    try {
+        const response = await prisma.topic.delete({
+            where: { id: Number(topicId) },
         });
         return res.status(200).json({ message: response });
     } catch (err) {
