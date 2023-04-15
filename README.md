@@ -1,6 +1,6 @@
-# MIR Talent
+# Disruptive Backend
 
-A talent-matching and networking platform that connects MIR alumni with potential employers, and companies with MIR talent they can hire.
+Este
 
 - Built with Node.js and Express
 - Mongoose ODM

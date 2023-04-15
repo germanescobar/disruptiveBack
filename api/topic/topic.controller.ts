@@ -106,7 +106,7 @@ export async function deleteOneTopic(req: Request, res: Response) {
  *        categories:
  *          type: string
  *        updatedAt:
- *          type: string
+ *          type: string 
  *    CreateTopicRequest:
  *      name:
  *       type: string

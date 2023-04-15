@@ -108,5 +108,5 @@ export default router;
  *            schema:
  *              $ref: '#/components/schemas/CreateUserResponse'
  *      500:
- *        description: message: 'Something went wrong'
+ *        description: 'message: Something went wrong'
  */

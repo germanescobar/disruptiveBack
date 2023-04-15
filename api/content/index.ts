@@ -82,5 +82,5 @@ export default router;
  *            schema:
  *              $ref: '#/components/schemas/CreateContentResponse'
  *      500:
- *        description: message: 'Something went wrong'
+ *        description: 'message: Something went wrong'
  */
