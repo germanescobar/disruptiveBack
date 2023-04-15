@@ -4,7 +4,7 @@
   "description": "disruptive proyect backend",
   "main": "index.js",
   "scripts": {
-    "build": "node build --output public",
+    "build": "tsc",
     "start": "node ./dist/index.js",
     "dev": "ts-node-dev --respawn ./index.ts",
     "test": "jest",

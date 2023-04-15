@@ -1,37 +1,26 @@
 # Disruptive Backend
 
-Este
+Este es el Backend del proyect Disruptive a continuacion se describe la erramientas utlizadas y paso a paso para ejecutar el backend
 
-- Built with Node.js and Express
-- Mongoose ODM
-- REST API
+## Funcionalidades
 
-## Getting Started
+- Express y Node.js ceacion Backend
+- Prisma
+- PostgreSQL (db)
+- Swagger (Documentacion de API) http://localhost:8080/docs/
+- Jest y SuperTest ( Testing Unitario)
 
-### Prerequisites
+## Information
+- [Front End Repository](https://github.com/JesusOsorioJ/disruptiveFront)
+## Collaborators
+- [Jesus Osorio](https://github.com/JesusOsorioJ)
 
-- [Git](https://git-scm.com/)
-- [Node.js and npm](nodejs.org) Node >= 16.13 LTS, npm >= 8.1.x
-- [MongoDB](https://www.mongodb.org/) - Keep a running daemon with `mongod`
-- [Scraping Bot Account](https://www.scraping-bot.io/)
+## Developing
 
-### Developing
+1. Correr `npm install` para instalar dependencias de desarrollo
+2. Crear y Configurar `.env` como `.env.example`
+3. Generar migraciones con libreria prisma `npx prisma migrate dev --name init`
+4. Ejecutar `npx prisma generate` para crear los tipos de los modelos (prisma)
+5. Generar Seeding con prisma `npx prisma db seed`
+6. Run `npm run dev` to start the development server.
 
-1. Run `npm install` to install server dependencies.
-
-2. Configure the env
-```shell
-$ cp .env.example .env
-```
-
-3. Update `.env` with the required info
-
-4. Run `npm run dev` to start the development server.
-
-
-## Contributing to MIR Talent
-[Contributing to the project](CONTRIBUTING.md)
-
-## License
-
-[MIT](LICENSE)
