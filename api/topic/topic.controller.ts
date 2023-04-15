@@ -33,7 +33,6 @@ export async function getAllTopic(req: Request, res: Response) {
           message: { data:response, total: total.length },
         });
       } catch (err) {
-        console.log("err",err);
         
         return res.status(400).json({ message: 'Something went wrong' });
     }
@@ -58,7 +57,6 @@ export async function createOneTopic(req: Request, res: Response) {
 
   export async function updateOneTopic(req: Request, res: Response) {
     const { id, name, urlImage,categories } = req.body;
-    console.log("req.body",req.body);
     try {
       const response = await prisma.topic.update({
         where: { id },

@@ -66,9 +66,7 @@ export async function createOneUser(req: Request, res: Response) {
       },
     });
     return res.status(200).json({ message: response });
-  } catch (err) {
-    console.log('err',err);
-    
+  } catch (err) {    
     return res.status(500).json({ message: err });
   }
 }
