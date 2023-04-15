@@ -1,12 +1,12 @@
 # Disruptive Backend
 
-Este es el Backend del proyect Disruptive a continuacion se describe la erramientas utlizadas y paso a paso para ejecutar el backend
+Este es el Backend del proyecto Disruptive a continuacion se describe las herramientas utilizadas y paso a paso para ejecutar el backend
 
 ## Funcionalidades
 
-- Express y Node.js ceacion Backend
-- Prisma
-- PostgreSQL (db)
+- Creacion Backend Express Node.js Typescript
+- Prisma ( Conexion DB)
+- PostgreSQL (DB)
 - Swagger (Documentacion de API) http://localhost:8080/docs/
 - Jest y SuperTest ( Testing Unitario)
 
