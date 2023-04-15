@@ -8,41 +8,21 @@ import log from '../logger';
 const ext = process.env.NODE_ENV === 'production' ? '.js' : '.Ts';
 
 const routesApi = path.join(__dirname, `../api/**/index${ext}`);
-const schemasApi = path.join(__dirname, `../api/**/**.schema${ext}`);
+const schemasApi = path.join(__dirname, `../api/**/**.controller${ext}`);
 
 const options = {
   definition: {
     openapi: '3.0.1',
     info: {
-      title: 'API Documentation',
+      title: 'Disruptive Backend',
       version:'1.0.0',
-      description: 'API Documentation Talent platform',
-      license: {
-        name: 'MIT',
-        url: 'https://choosealicense.com/licenses/mit/',
-      },
+      description: 'API Documentation Disruptive Backend Proyect',
       contact: {
-        name: 'Make It Real',
-        url: 'https://makeitreal.camp/',
-        email: 'info@makeitreal.camp',
+        name: 'Mi LinkedIn',
+        url: 'https://www.linkedin.com/in/jesus-david-osorio-jimenez/',
+        email: 'jesdaos@hotmail.com',
       },
     },
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-          in: 'header',
-        },
-      },
-    },
-    // Only for all endpoints
-    // security: [
-    //   {
-    //     bearerAuth: [],
-    //   },
-    // ],
     servers: [
       {
         url: 'http://localhost:8080',

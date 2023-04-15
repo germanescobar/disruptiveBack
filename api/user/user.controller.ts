@@ -5,12 +5,10 @@ const prisma = new PrismaClient();
 
 export async function filterByAllUser(req: Request, res: Response) {
   const email = (req.query.email || '').toString();
-  const type = req.query.type as TypeUser;
+  const type = req.query.typeUser as TypeUser;
 
   const page = Number(req.query.page);
   const pagination = Number(req.query.pagination || 10);
-  console.log("req.query",type);
-  
 
   try {
     // 1. Filtro para lista de user. "con paginacion"
@@ -37,7 +35,7 @@ export async function filterByAllUser(req: Request, res: Response) {
       message: { data: response, total: total.length },
     });
   } catch (err) {
-    return res.status(400).json({ message: 'Something went wrong' });
+    return res.status(500).json({ message: 'Something went wrong' });
   }
 }
 
@@ -103,3 +101,56 @@ export async function deleteOneUser(req: Request, res: Response) {
     return res.status(400).json({ message: 'Something went wrong' });
   }
 }
+
+
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *    ListUserResponse:
+ *     type: array
+ *     items:
+ *        $ref: '#/components/schemas/CreateUserResponse'
+ *    CreateUserResponse:
+ *      type: object
+ *      properties:
+ *        _id:
+ *          type: string
+ *        email:
+ *          type: string
+ *        name:
+ *          type: string
+ *        password:
+ *          type: string
+ *        updatedAt:
+ *          type: string
+ *    AuthenticateRequest:
+ *     type: object
+ *     properties:
+ *      email:
+ *       type: string
+ *      password:
+ *       type: string
+ *     required:
+ *      - email
+ *      - password
+ *    CreateUserRequest:
+ *     email:
+ *       type: string
+ *      password:
+ *       type: string
+ *      type:
+ *       type: string
+ *     required:
+ *      - email
+ *      - password
+ *      - type
+ *    DeleteOneUserInput:
+ *      type: object
+ *      properties:
+ *        id:
+ *          type: string
+ *          default: 0
+ *      required:
+ *        - id
+ */

@@ -4,8 +4,10 @@ import { PrismaClient, Category } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export async function filterByAllContent(req: Request, res: Response) {
-    const name = (req.query.search || '').toString();
-    const topicId = Number(req.query.topicId || 0);
+    const name = (req.query.name || '').toString();
+    const topicName = (req.query.topicName || '').toString();
+    const userId = Number(req.query.userId || 0)
+    const category = req.query.category as Category;
 
     const page = Number(req.query.page);
     const pagination = Number(req.query.pagination || 100);
@@ -18,7 +20,10 @@ export async function filterByAllContent(req: Request, res: Response) {
             take: pagination,
             where: {
                 name: { contains: name, mode: 'insensitive' },
-                ...(topicId !== 0 && { topicId }),
+                topicName: { contains: topicName, mode: 'insensitive' },
+                ...(userId !== 0 && { userId }),
+                ...(category !== undefined && { category }),
+
             },
         });
         // 2. Filtro para lista de user. Sin paginacion, usado para mostrar total de busqueda
@@ -26,7 +31,9 @@ export async function filterByAllContent(req: Request, res: Response) {
             orderBy: [{ id: 'asc' }],
             where: {
                 name: { contains: name, mode: 'insensitive' },
-                ...(topicId !== 0 && { topicId }),
+                topicName: { contains: topicName, mode: 'insensitive' },
+                ...(userId !== 0 && { userId }),
+                ...(category !== undefined && { category }),
             },
         });
         return res.status(200).json({
@@ -41,8 +48,9 @@ export async function filterByAllContent(req: Request, res: Response) {
 
 
 export async function createOneContent(req: Request, res: Response) {
-    const { userId, name, description, urlImage, url } = req.body;
-    const category = (req.query.category || '') as Category;
+    const { userId, name, description, urlImage, url, topicName } = req.body;
+    const category = (req.body.category || '') as Category;
+
 
     try {
         const response = await prisma.user.update({
@@ -52,7 +60,7 @@ export async function createOneContent(req: Request, res: Response) {
                     create:
                     {
                         name, description, urlImage,
-                        url, updatedAt: new Date(), category
+                        url, updatedAt: new Date(), category, topicName
                     },
                 },
             },
@@ -65,12 +73,14 @@ export async function createOneContent(req: Request, res: Response) {
 
 
 export async function updateOneContent(req: Request, res: Response) {
-    const { contentId, name, description, urlImage, url } = req.body;
-    const category = (req.query.category || '') as Category;
+    const { id, name, description, urlImage, url } = req.body;
+    const category = (req.body.category || '') as Category;
+    console.log(req.body);
+
 
     try {
         const response = await prisma.content.update({
-            where: { id: Number(contentId) },
+            where: { id },
             data: {
                 name, description, urlImage,
                 url, updatedAt: new Date(), category
@@ -78,6 +88,8 @@ export async function updateOneContent(req: Request, res: Response) {
         });
         return res.status(200).json({ message: response });
     } catch (err) {
+        console.log("err", err);
+
         return res.status(400).json({ message: 'Something went wrong' });
     }
 }
@@ -93,3 +105,46 @@ export async function deleteOneContent(req: Request, res: Response) {
         return res.status(400).json({ message: 'Something went wrong' });
     }
 }
+
+
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *    ListContentResponse:
+ *     type: array
+ *     items:
+ *        $ref: '#/components/schemas/CreateContentResponse'
+ *    CreateContentResponse:
+ *      type: object
+ *      properties:
+ *        _id:
+ *          type: string
+ *        email:
+ *          type: string
+ *        name:
+ *          type: string
+ *        password:
+ *          type: string
+ *        updatedAt:
+ *          type: string
+ *    CreateContentRequest:
+ *     email:
+ *       type: string
+ *      password:
+ *       type: string
+ *      type:
+ *       type: string
+ *     required:
+ *      - email
+ *      - password
+ *      - type
+ *    DeleteOneContentInput:
+ *      type: object
+ *      properties:
+ *        id:
+ *          type: string
+ *          default: 0
+ *      required:
+ *        - id
+ */

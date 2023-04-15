@@ -84,3 +84,46 @@ export async function deleteOneTopic(req: Request, res: Response) {
         return res.status(400).json({ message: 'Something went wrong' });
     }
 }
+
+
+/**
+ * @openapi
+ * components:
+ *  schemas:
+ *    ListTopicResponse:
+ *     type: array
+ *     items:
+ *        $ref: '#/components/schemas/CreateTopicResponse'
+ *    CreateTopicResponse:
+ *      type: object
+ *      properties:
+ *        _id:
+ *          type: string
+ *        name:
+ *          type: string
+ *        urlImage:
+ *          type: string
+ *        categories:
+ *          type: string
+ *        updatedAt:
+ *          type: string
+ *    CreateTopicRequest:
+ *      name:
+ *       type: string
+ *      urlImage:
+ *       type: string
+ *      categories:
+ *       type: string
+ *     required:
+ *      - name
+ *      - urlImage
+ *      - categories
+ *    DeleteOneTopicInput:
+ *      type: object
+ *      properties:
+ *        id:
+ *          type: string
+ *          default: 0
+ *      required:
+ *        - id
+ */
